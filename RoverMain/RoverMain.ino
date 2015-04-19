@@ -29,6 +29,7 @@ ActionScore actionScore;
 #define HAPPY 0b1111
 #define CALM 0b1110
 #define FOCUSED 0b1100
+#define UNKNOWN 0b0100
 
 // limit ourselves to possibly four actions for a given context pair
 #define A0_MASK   0b1111000000000000
@@ -106,9 +107,14 @@ ActionScore epsilon_select(byte ctxpair, byte eps) {
 byte reccodes2ctx() {
 	//we should read in the serial from here
 	//and determine the contexts we have and want to get to
-
+	if (Serial.available() > 0) {
+		int incomingByte = Serial.read();
+		//now that we have the byte corresponding to the current ctx,
+		//determine which ctx we want to trigger
+		return (0 |(0 << 4)); //placeholder statement for the ctx we want to trigger and the ctx we have currently
+	}
 	//example ctxes: happy, sad, angry, fearful, calm, focused, distracted
-	return 0;
+	return (UNKNOWN | (UNKNOWN << 4));
 }
 
 /*** Pin Layout ***/

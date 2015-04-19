@@ -22,6 +22,14 @@ ActionScore actionScore;
 #define FROM_CTX_MASK 0b11110000
 #define TO_CTX_MASK   0b00001111
 
+#define SAD 0b0000
+#define MAD 0b0001
+#define FEARFUL 0b0010
+#define DISTRACTED 0b0011
+#define HAPPY 0b1111
+#define CALM 0b1110
+#define FOCUSED 0b1100
+
 // limit ourselves to possibly four actions for a given context pair
 #define A0_MASK   0b1111000000000000
 #define A1_MASK   0b0000111100000000
@@ -30,7 +38,7 @@ ActionScore actionScore;
 
 //int lookups[256];
 //lookups[0b00101010] = 0b0011110111001001;
-int lookups[256];
+int lookups[256]; //we should probably burn this into prog memory 
 
 // The read and write handlers for using the EEPROM Library
 void writer(unsigned long address, byte data)
@@ -166,7 +174,7 @@ void setup() {
 		db.create(0, TABLE_SIZE, sizeof(actionScore));
 
 		/*
-		for (int recno = 1; recno < (MAX_CTXS*MAX_CTXS); recno++) {
+		for (int recno = 0; recno < 16; recno++) {
 			actionScore.score = 128; // set it in the middle for +- adjustment
 			actionScore.id = (byte) recno;
 			actionScore.ctxpair = (fromctx << 4) | (toctx);
@@ -185,11 +193,41 @@ void loop() {
 	//insert retrieving EEG return codes here
 	/*
 	byte ctxpair = reccodes2ctx();
+
+	switch((ctxpair & FROM_CTX_MASK) >> 4) {
+		case SAD:
+			break;
+		case MAD:
+			break;
+		case FEARFUL:
+			break;
+		case DISTRACTED:
+			break;
+		case HAPPY:
+			break;
+		case CALM:
+			break;
+		case FOCUSED:
+			break;
+		default:
+			break;
+	}
+
 	actionScore = epsilon_select(ctxpair, 10);
 	switch(actionScore.action) {
 		case 0:
-			//some action
+			allForward(32);
 			break;
+		case 1:
+			allBackward(32);
+		case 2:
+			cwCircle(32);
+		case 3:
+			ccwCircle(32);
+		case 4:
+			squiggle(32, 1, 1);
+		case 5:
+			squiggle(32, 1, 5);
 		default:
 			break;
 	}

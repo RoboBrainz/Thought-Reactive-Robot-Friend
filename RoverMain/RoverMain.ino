@@ -5,11 +5,11 @@
 #include <Adafruit_NeoPixel.h> // Adafruit NeoPixel Library
 
 typedef struct {
-  byte action;
-  byte prev_ctx; // maybe we can use the first four bits for the prev and last four for next
-  //byte desired_ctx;
-  byte score;
-  byte id;
+	byte action;
+	byte prev_ctx; // maybe we can use the first four bits for the prev and last four for next
+	//byte desired_ctx;
+	byte score;
+	byte id;
 } ActionScore;
 
 ActionScore actionScore;
@@ -129,30 +129,30 @@ int ledData = 12;
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(2, ledData, NEO_RGB + NEO_KHZ800);
 
 void setup() {
-        /*** Pin Setup ***/
-        pinMode(standby, OUTPUT);
-        
-        pinMode(speedFL, OUTPUT);
-        pinMode(in1FL, OUTPUT);
-        pinMode(in2FL, OUTPUT);
-        
-        pinMode(speedFR, OUTPUT);
-        pinMode(in1FR, OUTPUT);
-        pinMode(in2FR, OUTPUT);
-       
-        pinMode(speedBL, OUTPUT);
-        pinMode(in1BL, OUTPUT);
-        pinMode(in2BL, OUTPUT);
-        
-        pinMode(speedBR, OUTPUT);
-        pinMode(in1BR, OUTPUT);
-        pinMode(in2BR, OUTPUT);
-      
-        /** LED Setup **/
-        strip.begin();
-        strip.show();
-  
-        /** Database Setup **/
+	/*** Pin Setup ***/
+	pinMode(standby, OUTPUT);
+
+	pinMode(speedFL, OUTPUT);
+	pinMode(in1FL, OUTPUT);
+	pinMode(in2FL, OUTPUT);
+	
+	pinMode(speedFR, OUTPUT);
+	pinMode(in1FR, OUTPUT);
+	pinMode(in2FR, OUTPUT);
+ 
+	pinMode(speedBL, OUTPUT);
+	pinMode(in1BL, OUTPUT);
+	pinMode(in2BL, OUTPUT);
+	
+	pinMode(speedBR, OUTPUT);
+	pinMode(in1BR, OUTPUT);
+	pinMode(in2BR, OUTPUT);
+
+	/** LED Setup **/
+	strip.begin();
+	strip.show();
+
+	/** Database Setup **/
 	Serial.begin(9600);
 	Serial.print("Max DB records: ");
 	Serial.println(MAX_RECORDS);
@@ -206,104 +206,104 @@ void loop() {
 /*** Motor Functions ***/
 // Moves the rover forward at given speed
 void allForward(int forSpeed) {
-  motorize( 0, forSpeed, 1);
-  motorize( 1, forSpeed, 1);
-  motorize( 2, forSpeed, 1);
-  motorize( 3, forSpeed, 1);
+	motorize( 0, forSpeed, 1);
+	motorize( 1, forSpeed, 1);
+	motorize( 2, forSpeed, 1);
+	motorize( 3, forSpeed, 1);
 }
 
 // Moves the rover backward at given speed
 void allBackward(int backSpeed) {
-  motorize( 0, backSpeed, 0);
-  motorize( 1, backSpeed, 0);
-  motorize( 2, backSpeed, 0);
-  motorize( 3, backSpeed, 0);
+	motorize( 0, backSpeed, 0);
+	motorize( 1, backSpeed, 0);
+	motorize( 2, backSpeed, 0);
+	motorize( 3, backSpeed, 0);
 }
 
 // Moves the rover in a clockwise circle at given speed
 void cwCircle(int circSpeed) {
-  motorize(0, circSpeed, 1);
-  motorize(1, circSpeed / 4, 1);
-  motorize(2, circSpeed, 1);
-  motorize(3, circSpeed / 4, 1);
+	motorize(0, circSpeed, 1);
+	motorize(1, circSpeed / 4, 1);
+	motorize(2, circSpeed, 1);
+	motorize(3, circSpeed / 4, 1);
 }
 
 // Moves the rover in a counter-clockwise circle at given speed
 void ccwCircle(int circSpeed) {
-  motorize(0, circSpeed / 4, 1);
-  motorize(1, circSpeed, 1);
-  motorize(2, circSpeed / 4, 1);
-  motorize(3, circSpeed, 1);
+	motorize(0, circSpeed / 4, 1);
+	motorize(1, circSpeed, 1);
+	motorize(2, circSpeed / 4, 1);
+	motorize(3, circSpeed, 1);
 }
 
 // Moves the rover forward in a squiggly line for a given length in seconds
 // Larger squigFactors result in more squiggly lines
 void squiggle(int squigSpeed, int squigTime, int squigFactor) {
-  for (int i = 0; i < squigTime; i += 2000) {
-    motorize(0, squigSpeed, 1);
-    motorize(1, squigSpeed / squigFactor, 1);
-    motorize(2, squigSpeed, 1);
-    motorize(3, squigSpeed / squigFactor, 1);
-    delay(1000);
-    motorize(0, squigSpeed / squigFactor, 1);
-    motorize(1, squigSpeed, 1);
-    motorize(2, squigSpeed / squigFactor, 1);
-    motorize(3, squigSpeed, 1);
-    delay(1000);
-  }
-  brakes();
+	for (int i = 0; i < squigTime; i += 2000) {
+		motorize(0, squigSpeed, 1);
+		motorize(1, squigSpeed / squigFactor, 1);
+		motorize(2, squigSpeed, 1);
+		motorize(3, squigSpeed / squigFactor, 1);
+		delay(1000);
+		motorize(0, squigSpeed / squigFactor, 1);
+		motorize(1, squigSpeed, 1);
+		motorize(2, squigSpeed / squigFactor, 1);
+		motorize(3, squigSpeed, 1);
+		delay(1000);
+	}
+	brakes();
 }
 
 // Send speeds of zero in backward direction to stop wheels
 void brakes() {
-  motorize( 0, 0, 0);
-  motorize( 1, 0, 0);
-  motorize( 2, 0, 0);
-  motorize( 3, 0, 0);
+	motorize( 0, 0, 0);
+	motorize( 1, 0, 0);
+	motorize( 2, 0, 0);
+	motorize( 3, 0, 0);
 }
 
 // Motor instructions for speed and direction
 void motorize(int motor, int speed, int direction) {
-  // when direction is 0, default is backward
-  boolean forward = LOW;
-  boolean backward = HIGH;
-  // otherwise direction is 1 and is set to forward
-  if (direction == 1) {
-    forward = HIGH;
-    backward = LOW;
-  }
-  // Write to pins:
-  // Front left
-  if (motor == 0) {
-    digitalWrite(in1FL, forward);
-    digitalWrite(in2FL, backward);
-    analogWrite(speedFL, speed);
-  }
-  // Front Right
-  else if (motor == 1) {
-    digitalWrite(in1FR, forward);
-    digitalWrite(in2FR, backward);
-    analogWrite(speedFR, speed);
-  }
-  // Back Left
-  else if (motor == 2) {
-    digitalWrite(in1BL, forward);
-    digitalWrite(in2BL, backward);
-    analogWrite(speedBL, speed);
-  }
-  // Back Right
-  else {
-    digitalWrite(in1BR, forward);
-    digitalWrite(in2BR, backward);
-    analogWrite(speedBR, speed);
-  }
+	// when direction is 0, default is backward
+	boolean forward = LOW;
+	boolean backward = HIGH;
+	// otherwise direction is 1 and is set to forward
+	if (direction == 1) {
+		forward = HIGH;
+		backward = LOW;
+	}
+	// Write to pins:
+	// Front left
+	if (motor == 0) {
+		digitalWrite(in1FL, forward);
+		digitalWrite(in2FL, backward);
+		analogWrite(speedFL, speed);
+	}
+	// Front Right
+	else if (motor == 1) {
+		digitalWrite(in1FR, forward);
+		digitalWrite(in2FR, backward);
+		analogWrite(speedFR, speed);
+	}
+	// Back Left
+	else if (motor == 2) {
+		digitalWrite(in1BL, forward);
+		digitalWrite(in2BL, backward);
+		analogWrite(speedBL, speed);
+	}
+	// Back Right
+	else {
+		digitalWrite(in1BR, forward);
+		digitalWrite(in2BR, backward);
+		analogWrite(speedBR, speed);
+	}
 }
 
 void sleep() {
-  digitalWrite(standby, LOW); // enable standby mode
+	digitalWrite(standby, LOW); // enable standby mode
 }
 
 void wake() {
-  digitalWrite(standby, HIGH); // disable standby mode
+	digitalWrite(standby, HIGH); // disable standby mode
 }
 

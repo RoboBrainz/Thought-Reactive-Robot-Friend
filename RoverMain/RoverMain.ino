@@ -221,30 +221,86 @@ void loop() {
 
 	actionScore = epsilon_select(ctxpair, 10);
 	switch(actionScore.action) {
-		case 0:
-			allForward(32);
+		case 0: // Drive forward, turn around, drive back
+			wake();
+			allForward(100);
+			delay(1000);
+			brakes();
+			motorize( 0, 50, 1); // UNTESTED 180 deg turn
+			motorize( 1, 50, 0); // UNTESTED
+			motorize( 2, 50, 1); // UNTESTED
+			motorize( 3, 50, 0); // UNTESTED
+			delay(1000); // PROBABLY NEED TO CHANGE DELAY
+			brakes();
+			allForward(100);
+			delay(1000);
+			sleep();
 			break;
-		case 1:
-			allBackward(32);
-		case 2:
-			cwCircle(32);
-		case 3:
-			ccwCircle(32);
-		case 4:
-			squiggle(32, 1, 1);
-		case 5:
-			squiggle(32, 1, 5);
+		case 1: // Drive backward
+			wake();
+			allBackward(50);
+			delay(2000);
+			brakes();
+			sleep();
+		case 2: // Drive in a clockwise circle
+			wake();
+			cwCircle(50);
+			delay(2000); // PROBABLY NEED TO CHANGE DELAY
+			sleep();
+		case 3: // Drive in a counter-clockwise circle
+			wake();
+			ccwCircle(50);
+			delay(2000); // PROBABLY NEED TO CHANGE DELAY
+			sleep();
+		case 4: // Drive in a slight squiggle for 3 seconds
+			wake();
+			squiggle(75, 3, 2);
+			sleep();
+		case 5: // Drive in a larger squiggle for 3 seconds
+			wake();
+			squiggle(75, 3, 4);
+			sleep();
 		case 6:
+			wake();
+			// ACTION
+			sleep();
 		case 7:
+			wake();
+			// ACTION
+			sleep();
 		case 8:
+			wake();
+			// ACTION
+			sleep();
 		case 9:
+			wake();
+			// ACTION
+			sleep();
 		case 10:
+			wake();
+			// ACTION
+			sleep();
 		case 11:
+			wake();
+			// ACTION
+			sleep();
 		case 12:
+			wake();
+			// ACTION
+			sleep();
 		case 13:
+			wake();
+			// ACTION
+			sleep();
 		case 14:
+			wake();
+			// ACTION
+			sleep();
 		case 15:
-		default:
+			wake();
+			// ACTION
+			sleep();
+		default: // Do nothing
 			break;
 	}
 	byte newctxpair = reccodes2ctx();

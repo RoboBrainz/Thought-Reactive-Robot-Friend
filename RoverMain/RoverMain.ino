@@ -32,10 +32,10 @@ ActionScore actionScore;
 #define UNKNOWN 0b0100
 
 // limit ourselves to possibly four actions for a given context pair
-#define A0_MASK   0b1111000000000000
-#define A1_MASK   0b0000111100000000
-#define A2_MASK   0b0000000011110000
-#define A3_MASK   0b0000000000001111
+#define ACTION0_MASK   0b1111000000000000
+#define ACTION1_MASK   0b0000111100000000
+#define ACTION2_MASK   0b0000000011110000
+#define ACTION3_MASK   0b0000000000001111
 
 //int lookups[256];
 //lookups[0b00101010] = 0b0011110111001001;
@@ -78,10 +78,10 @@ ActionScore epsilon_select(byte ctxpair, byte eps) {
 
 		ActionScore maxScore;
 
-		db.readRec(records[ctxpair] & (15 << 0), EDB_REC actionScore1 );
-		db.readRec(records[ctxpair] & (15 << 1), EDB_REC actionScore2 );
-		db.readRec(records[ctxpair] & (15 << 2), EDB_REC actionScore3 );
-		db.readRec(records[ctxpair] & (15 << 3), EDB_REC actionScore4 );
+		db.readRec(records[ctxpair] & ACTION0_MASK, EDB_REC actionScore1 );
+		db.readRec(records[ctxpair] & ACTION1_MASK, EDB_REC actionScore2 );
+		db.readRec(records[ctxpair] & ACTION2_MASK, EDB_REC actionScore3 );
+		db.readRec(records[ctxpair] & ACTION3_MASK, EDB_REC actionScore4 );
 
 		maxScore = actionScore1;
 		if(maxScore > actionScore2.score) {
@@ -201,6 +201,25 @@ void loop() {
 	byte ctxpair = reccodes2ctx();
 
 	switch((ctxpair & FROM_CTX_MASK) >> 4) {
+		case SAD:
+			break;
+		case MAD:
+			break;
+		case FEARFUL:
+			break;
+		case DISTRACTED:
+			break;
+		case HAPPY:
+			break;
+		case CALM:
+			break;
+		case FOCUSED:
+			break;
+		default:
+			break;
+	}
+
+	switch(ctxpair & TO_CTX_MASK) {
 		case SAD:
 			break;
 		case MAD:

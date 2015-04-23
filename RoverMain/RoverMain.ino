@@ -202,41 +202,58 @@ void loop() {
 
 	switch((ctxpair & FROM_CTX_MASK) >> 4) {
 		case SAD:
+			strip.setPixelColor(0, strip.Color(0, 0 , 0));
 			break;
 		case MAD:
+			strip.setPixelColor(0, strip.Color(0, 0 , 0));
 			break;
 		case FEARFUL:
+			strip.setPixelColor(0, strip.Color(0, 0 , 0));
 			break;
 		case DISTRACTED:
+			strip.setPixelColor(0, strip.Color(0, 0 , 0));
 			break;
 		case HAPPY:
+			strip.setPixelColor(0, strip.Color(0, 0 , 0));
 			break;
 		case CALM:
+			strip.setPixelColor(0, strip.Color(0, 0 , 0));
 			break;
 		case FOCUSED:
+			strip.setPixelColor(0, strip.Color(0, 0 , 0));
 			break;
 		default:
+			strip.setPixelColor(0, strip.Color(0, 0 , 0));
 			break;
 	}
 
 	switch(ctxpair & TO_CTX_MASK) {
 		case SAD:
+			strip.setPixelColor(1, strip.Color(0, 0 , 0));
 			break;
 		case MAD:
+			strip.setPixelColor(1, strip.Color(0, 0 , 0));
 			break;
 		case FEARFUL:
+			strip.setPixelColor(1, strip.Color(0, 0 , 0));
 			break;
 		case DISTRACTED:
+			strip.setPixelColor(1, strip.Color(0, 0 , 0));
 			break;
 		case HAPPY:
+			strip.setPixelColor(1, strip.Color(0, 0 , 0));
 			break;
 		case CALM:
+			strip.setPixelColor(1, strip.Color(0, 0 , 0));
 			break;
 		case FOCUSED:
+			strip.setPixelColor(1, strip.Color(0, 0 , 0));
 			break;
 		default:
+			strip.setPixelColor(1, strip.Color(0, 0 , 0));
 			break;
 	}
+	strip.show();
 
 	actionScore = epsilon_select(ctxpair, 10);
 	switch(actionScore.action) {

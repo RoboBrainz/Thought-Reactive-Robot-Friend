@@ -258,63 +258,70 @@ void setup() {
 
 void loop() {
 	//insert retrieving EEG return codes here
-	/*
+	//
 	byte ctxpair = reccodes2ctx();
 
 	switch((ctxpair & FROM_CTX_MASK) >> 4) {
 		case SAD:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(0, 0 , 255));
 			break;
 		case MAD:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(255, 0 , 0));
 			break;
 		case FEARFUL:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(255, 0 , 14  0));
 			break;
 		case DISTRACTED:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(165, 0 , 255));
 			break;
 		case HAPPY:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(0, 255, 65));
 			break;
 		case CALM:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(0, 248 , 255));
 			break;
 		case FOCUSED:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(255, 255, 213));
 			break;
 		default:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(255, 123 , 0));
 			break;
 	}
 
 	switch(ctxpair & TO_CTX_MASK) {
 		case SAD:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
-			break;
+			strip.setPixelColor(1, strip.Color(0, 0 , 255));
+			break; 
 		case MAD:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(255, 0 , 0));
 			break;
 		case FEARFUL:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(255, 0 , 140));
 			break;
 		case DISTRACTED:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(165, 0 , 255));
 			break;
 		case HAPPY:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(0, 255, 65));
 			break;
 		case CALM:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(0, 248, 255));
 			break;
 		case FOCUSED:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(255, 255 , 213));
 			break;
 		default:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(255, 123 , 0));
 			break;
 	}
 	strip.show();
+
+	if (((ctxpair & FROM_CTX_MASK) >> 4) == (ctxpair & TO_CTX_MASK)) {
+		//don't do anything, not even the epsilon select,
+		//if the desired context and current context are the same
+		delay(2000);
+		return;
+	}
 
 	actionScore = epsilon_select(ctxpair, 10);
 	switch(actionScore.action) {
@@ -407,7 +414,7 @@ void loop() {
 		actionScore.score--;
 	}
 	db.updateRec(actionScore.id, EDB_REC actionScore);
-	*/
+	//
 }
 
 /*** Motor Functions ***/

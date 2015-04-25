@@ -108,25 +108,25 @@ byte reccodes2ctx() {
 	//we should read in the serial from here
 	//and determine the contexts we have and want to get to
 	if (Serial.available() > 0) {
-		int incomingByte = Serial.read();
+		char incomingByte = Serial.read();
 		
 		//now that we have the byte corresponding to the current ctx,
 		//determine which ctx we want to trigger
 
 		switch(incomingByte) {
-			case SAD:
+			case 's':
 				return (SAD << 4) | HAPPY;
-			case FEARFUL:
+			case 'f':
 				return (FEARFUL << 4) | CALM;
-			case DISTRACTED:
+			case 'd':
 				return (DISTRACTED << 4) | FOCUSED;
-			case MAD:
+			case 'a':
 				return (MAD << 4) | CALM;
-			case HAPPY:
+			case 'h':
 				return (HAPPY << 4) | HAPPY;
-			case FOCUSED:
+			case 'o':
 				return (FOCUSED << 4) | FOCUSED;
-			case CALM:
+			case 'c':
 				return (CALM << 4) | CALM;
 			default:
 				return (UNKNOWN << 4) | UNKNOWN;

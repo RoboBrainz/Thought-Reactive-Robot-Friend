@@ -39,7 +39,7 @@ ActionScore actionScore;
 
 //int lookups[256];
 //lookups[0b00101010] = 0b0011110111001001;
-int lookups[256]; //we should probably burn this into prog memory 
+//int lookups[256]; //we should probably burn this into prog memory 
 
 // The read and write handlers for using the EEPROM Library
 void writer(unsigned long address, byte data)
@@ -64,10 +64,26 @@ ActionScore epsilon_select(byte ctxpair, byte eps) {
 	//eps indicates how often we should randomly select
 
 	byte epsilon = (byte)random(100);
+	int ctxinfo = 0;
+
+	switch(ctxpair) {
+		case (SAD << 4) | HAPPY:
+			ctxinfo = (B00000011) << 8 | B10001100;
+			break;
+		case (FEARFUL << 4) | CALM:
+			ctxinfo = (B01000010) << 8 | B10011101;
+			break;
+		case (DISTRACTED << 4) | FOCUSED:
+			ctxinfo = (B00010110) << 8 | B10101110;
+			break;
+		case (MAD << 4) | CALM:
+			ctxinfo = (B01010111) << 8 | B10111111;
+			break;
+	}
 
 	if (epsilon < eps) {
 		ActionScore as;
-		db.readRec(lookups[ctxpair] & (15 << (random(4) * 4)), EDB_REC as)
+		db.readRec(ctxinfo & (15 << (random(4) * 4)), EDB_REC as)
 		return as;
 	}
 	else {
@@ -78,10 +94,10 @@ ActionScore epsilon_select(byte ctxpair, byte eps) {
 
 		ActionScore maxScore;
 
-		db.readRec(records[ctxpair] & ACTION0_MASK, EDB_REC actionScore1 );
-		db.readRec(records[ctxpair] & ACTION1_MASK, EDB_REC actionScore2 );
-		db.readRec(records[ctxpair] & ACTION2_MASK, EDB_REC actionScore3 );
-		db.readRec(records[ctxpair] & ACTION3_MASK, EDB_REC actionScore4 );
+		db.readRec(ctxinfo & ACTION0_MASK, EDB_REC actionScore1 );
+		db.readRec(ctxinfo & ACTION1_MASK, EDB_REC actionScore2 );
+		db.readRec(ctxinfo & ACTION2_MASK, EDB_REC actionScore3 );
+		db.readRec(ctxinfo & ACTION3_MASK, EDB_REC actionScore4 );
 
 		maxScore = actionScore1;
 		if(maxScore > actionScore2.score) {

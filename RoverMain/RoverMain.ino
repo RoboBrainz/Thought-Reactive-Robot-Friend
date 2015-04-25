@@ -109,9 +109,28 @@ byte reccodes2ctx() {
 	//and determine the contexts we have and want to get to
 	if (Serial.available() > 0) {
 		int incomingByte = Serial.read();
+		
 		//now that we have the byte corresponding to the current ctx,
 		//determine which ctx we want to trigger
-		return (0 |(0 << 4)); //placeholder statement for the ctx we want to trigger and the ctx we have currently
+
+		switch(incomingByte) {
+			case SAD:
+				return (SAD << 4) | HAPPY;
+			case FEARFUL:
+				return (FEARFUL << 4) | CALM;
+			case DISTRACTED:
+				return (DISTRACTED << 4) | FOCUSED;
+			case MAD:
+				return (MAD << 4) | CALM;
+			case HAPPY:
+				return (HAPPY << 4) | HAPPY;
+			case FOCUSED:
+				return (FOCUSED << 4) | FOCUSED;
+			case CALM:
+				return (CALM << 4) | CALM;
+			default:
+				return (UNKNOWN << 4) | UNKNOWN;
+		}
 	}
 	//example ctxes: happy, sad, angry, fearful, calm, focused, distracted
 	return (UNKNOWN | (UNKNOWN << 4));

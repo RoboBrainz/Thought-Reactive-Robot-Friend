@@ -183,6 +183,7 @@ void setup() {
 		for (int recno = 0; recno < 16; recno++) {
 			actionScore.score = 128; // set it in the middle for +- adjustment
 			actionScore.id = (byte) recno;
+			actionScore.action = (byte)recno;
 			switch (recno) {
 				case B0000:
 				case B0011:

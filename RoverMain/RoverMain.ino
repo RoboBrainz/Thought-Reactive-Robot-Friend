@@ -19,23 +19,23 @@ ActionScore actionScore;
 
 #define MAX_RECORDS (TABLE_SIZE - sizeof(EDB_Header))/sizeof(ActionScore)
 
-#define FROM_CTX_MASK 0b11110000
-#define TO_CTX_MASK   0b00001111
+#define FROM_CTX_MASK B11110000
+#define TO_CTX_MASK   B00001111
 
-#define SAD 0b0000
-#define MAD 0b0001
-#define FEARFUL 0b0010
-#define DISTRACTED 0b0011
-#define HAPPY 0b1111
-#define CALM 0b1110
-#define FOCUSED 0b1100
-#define UNKNOWN 0b0100
+#define SAD B0000
+#define MAD B0001
+#define FEARFUL B0010
+#define DISTRACTED B0011
+#define HAPPY B1111
+#define CALM B1110
+#define FOCUSED B1100
+#define UNKNOWN B0100
 
 // limit ourselves to possibly four actions for a given context pair
-#define ACTION0_MASK   0b1111000000000000
-#define ACTION1_MASK   0b0000111100000000
-#define ACTION2_MASK   0b0000000011110000
-#define ACTION3_MASK   0b0000000000001111
+#define ACTION0_MASK   B1111000000000000
+#define ACTION1_MASK   B0000111100000000
+#define ACTION2_MASK   B0000000011110000
+#define ACTION3_MASK   B0000000000001111
 
 //int lookups[256];
 //lookups[0b00101010] = 0b0011110111001001;
@@ -179,14 +179,39 @@ void setup() {
 		Serial.println("Creating DB");
 		db.create(0, TABLE_SIZE, sizeof(actionScore));
 
-		/*
+
 		for (int recno = 0; recno < 16; recno++) {
 			actionScore.score = 128; // set it in the middle for +- adjustment
 			actionScore.id = (byte) recno;
-			actionScore.ctxpair = (fromctx << 4) | (toctx);
+			switch (recno) {
+				case B0000:
+				case B0011:
+				case B1000:
+				case B1100:
+					actionScore.ctxpair = (SAD << 4) | HAPPY;
+					break;
+				case B0100:
+				case B0010:
+				case B1001:
+				case B1101:
+					actionScore.ctxpair = (FEARFUL << 4) | CALM;
+					break;
+				case B0001:
+				case B0110:
+				case B1010:
+				case B1110:
+					actionScore.ctxpair = (DISTRACTED << 4) | FOCUSED;
+					break;
+				case B0101:
+				case B0111:
+				case B1011:
+				case B1111:
+					actionScore.ctxpair = (MAD << 4) | CALM;
+					break;
+			}
 			db.appendRec(EDB_REC actionScore);
 		}
-		*/
+
 	}
 	else {
 		Serial.println("Using existing DB");

@@ -1,13 +1,13 @@
 #include <EDB.h>
 #include <EEPROM.h>
+
 #define TABLE_SIZE 1024// max size in ATMega328
 
 #include <Adafruit_NeoPixel.h> // Adafruit NeoPixel Library
 
 typedef struct {
 	byte action;
-	byte prev_ctx; // maybe we can use the first four bits for the prev and last four for next
-	//byte desired_ctx;
+	byte ctxpair; // maybe we can use the first four bits for the prev and last four for next
 	byte score;
 	byte id;
 } ActionScore;
@@ -32,10 +32,10 @@ ActionScore actionScore;
 #define UNKNOWN B0100
 
 // limit ourselves to possibly four actions for a given context pair
-#define ACTION0_MASK   B1111000000000000
-#define ACTION1_MASK   B0000111100000000
-#define ACTION2_MASK   B0000000011110000
-#define ACTION3_MASK   B0000000000001111
+#define ACTION0_MASK   15    //B1111000000000000
+#define ACTION1_MASK   240   //B0000111100000000
+#define ACTION2_MASK   3840  //B0000000011110000
+#define ACTION3_MASK   61440 //B0000000000001111
 
 //int lookups[256];
 //lookups[0b00101010] = 0b0011110111001001;
@@ -83,7 +83,7 @@ ActionScore epsilon_select(byte ctxpair, byte eps) {
 
 	if (epsilon < eps) {
 		ActionScore as;
-		db.readRec(ctxinfo & (15 << (random(4) * 4)), EDB_REC as)
+		db.readRec(ctxinfo & (15 << (random(4) * 4)), EDB_REC as);
 		return as;
 	}
 	else {
@@ -100,13 +100,13 @@ ActionScore epsilon_select(byte ctxpair, byte eps) {
 		db.readRec(ctxinfo & ACTION3_MASK, EDB_REC actionScore4 );
 
 		maxScore = actionScore1;
-		if(maxScore > actionScore2.score) {
+		if(maxScore.score > actionScore2.score) {
 			maxScore = actionScore2;
 		}
-		if (maxScore > actionScore3.score) {
+		if (maxScore.score > actionScore3.score) {
 			maxScore = actionScore3;
 		}
-		if (maxScore > actionScore4.score) {
+		if (maxScore.score > actionScore4.score) {
 			maxScore = actionScore4;
 		}
 
@@ -269,7 +269,7 @@ void loop() {
 			strip.setPixelColor(0, strip.Color(255, 0 , 0));
 			break;
 		case FEARFUL:
-			strip.setPixelColor(0, strip.Color(255, 0 , 14  0));
+			strip.setPixelColor(0, strip.Color(255, 0 , 140));
 			break;
 		case DISTRACTED:
 			strip.setPixelColor(0, strip.Color(165, 0 , 255));

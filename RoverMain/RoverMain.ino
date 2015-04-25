@@ -19,27 +19,27 @@ ActionScore actionScore;
 
 #define MAX_RECORDS (TABLE_SIZE - sizeof(EDB_Header))/sizeof(ActionScore)
 
-#define FROM_CTX_MASK 0b11110000
-#define TO_CTX_MASK   0b00001111
+#define FROM_CTX_MASK B11110000
+#define TO_CTX_MASK   B00001111
 
-#define SAD 0b0000
-#define MAD 0b0001
-#define FEARFUL 0b0010
-#define DISTRACTED 0b0011
-#define HAPPY 0b1111
-#define CALM 0b1110
-#define FOCUSED 0b1100
-#define UNKNOWN 0b0100
+#define SAD B0000
+#define MAD B0001
+#define FEARFUL B0010
+#define DISTRACTED B0011
+#define HAPPY B1111
+#define CALM B1110
+#define FOCUSED B1100
+#define UNKNOWN B0100
 
 // limit ourselves to possibly four actions for a given context pair
-#define ACTION0_MASK   0b1111000000000000
-#define ACTION1_MASK   0b0000111100000000
-#define ACTION2_MASK   0b0000000011110000
-#define ACTION3_MASK   0b0000000000001111
+#define ACTION0_MASK   B1111000000000000
+#define ACTION1_MASK   B0000111100000000
+#define ACTION2_MASK   B0000000011110000
+#define ACTION3_MASK   B0000000000001111
 
 //int lookups[256];
 //lookups[0b00101010] = 0b0011110111001001;
-int lookups[256]; //we should probably burn this into prog memory 
+//int lookups[256]; //we should probably burn this into prog memory 
 
 // The read and write handlers for using the EEPROM Library
 void writer(unsigned long address, byte data)
@@ -64,10 +64,26 @@ ActionScore epsilon_select(byte ctxpair, byte eps) {
 	//eps indicates how often we should randomly select
 
 	byte epsilon = (byte)random(100);
+	int ctxinfo = 0;
+
+	switch(ctxpair) {
+		case (SAD << 4) | HAPPY:
+			ctxinfo = (B00000011) << 8 | B10001100;
+			break;
+		case (FEARFUL << 4) | CALM:
+			ctxinfo = (B01000010) << 8 | B10011101;
+			break;
+		case (DISTRACTED << 4) | FOCUSED:
+			ctxinfo = (B00010110) << 8 | B10101110;
+			break;
+		case (MAD << 4) | CALM:
+			ctxinfo = (B01010111) << 8 | B10111111;
+			break;
+	}
 
 	if (epsilon < eps) {
 		ActionScore as;
-		db.readRec(lookups[ctxpair] & (15 << (random(4) * 4)), EDB_REC as)
+		db.readRec(ctxinfo & (15 << (random(4) * 4)), EDB_REC as)
 		return as;
 	}
 	else {
@@ -78,10 +94,10 @@ ActionScore epsilon_select(byte ctxpair, byte eps) {
 
 		ActionScore maxScore;
 
-		db.readRec(records[ctxpair] & ACTION0_MASK, EDB_REC actionScore1 );
-		db.readRec(records[ctxpair] & ACTION1_MASK, EDB_REC actionScore2 );
-		db.readRec(records[ctxpair] & ACTION2_MASK, EDB_REC actionScore3 );
-		db.readRec(records[ctxpair] & ACTION3_MASK, EDB_REC actionScore4 );
+		db.readRec(ctxinfo & ACTION0_MASK, EDB_REC actionScore1 );
+		db.readRec(ctxinfo & ACTION1_MASK, EDB_REC actionScore2 );
+		db.readRec(ctxinfo & ACTION2_MASK, EDB_REC actionScore3 );
+		db.readRec(ctxinfo & ACTION3_MASK, EDB_REC actionScore4 );
 
 		maxScore = actionScore1;
 		if(maxScore > actionScore2.score) {
@@ -108,10 +124,29 @@ byte reccodes2ctx() {
 	//we should read in the serial from here
 	//and determine the contexts we have and want to get to
 	if (Serial.available() > 0) {
-		int incomingByte = Serial.read();
+		char incomingByte = Serial.read();
+		
 		//now that we have the byte corresponding to the current ctx,
 		//determine which ctx we want to trigger
-		return (0 |(0 << 4)); //placeholder statement for the ctx we want to trigger and the ctx we have currently
+
+		switch(incomingByte) {
+			case 's':
+				return (SAD << 4) | HAPPY;
+			case 'f':
+				return (FEARFUL << 4) | CALM;
+			case 'd':
+				return (DISTRACTED << 4) | FOCUSED;
+			case 'a':
+				return (MAD << 4) | CALM;
+			case 'h':
+				return (HAPPY << 4) | HAPPY;
+			case 'o':
+				return (FOCUSED << 4) | FOCUSED;
+			case 'c':
+				return (CALM << 4) | CALM;
+			default:
+				return (UNKNOWN << 4) | UNKNOWN;
+		}
 	}
 	//example ctxes: happy, sad, angry, fearful, calm, focused, distracted
 	return (UNKNOWN | (UNKNOWN << 4));
@@ -179,14 +214,40 @@ void setup() {
 		Serial.println("Creating DB");
 		db.create(0, TABLE_SIZE, sizeof(actionScore));
 
-		/*
+
 		for (int recno = 0; recno < 16; recno++) {
 			actionScore.score = 128; // set it in the middle for +- adjustment
 			actionScore.id = (byte) recno;
-			actionScore.ctxpair = (fromctx << 4) | (toctx);
+			actionScore.action = (byte)recno;
+			switch (recno) {
+				case B0000:
+				case B0011:
+				case B1000:
+				case B1100:
+					actionScore.ctxpair = (SAD << 4) | HAPPY;
+					break;
+				case B0100:
+				case B0010:
+				case B1001:
+				case B1101:
+					actionScore.ctxpair = (FEARFUL << 4) | CALM;
+					break;
+				case B0001:
+				case B0110:
+				case B1010:
+				case B1110:
+					actionScore.ctxpair = (DISTRACTED << 4) | FOCUSED;
+					break;
+				case B0101:
+				case B0111:
+				case B1011:
+				case B1111:
+					actionScore.ctxpair = (MAD << 4) | CALM;
+					break;
+			}
 			db.appendRec(EDB_REC actionScore);
 		}
-		*/
+
 	}
 	else {
 		Serial.println("Using existing DB");
@@ -197,63 +258,70 @@ void setup() {
 
 void loop() {
 	//insert retrieving EEG return codes here
-	/*
+	//
 	byte ctxpair = reccodes2ctx();
 
 	switch((ctxpair & FROM_CTX_MASK) >> 4) {
 		case SAD:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(0, 0 , 255));
 			break;
 		case MAD:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(255, 0 , 0));
 			break;
 		case FEARFUL:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(255, 0 , 14  0));
 			break;
 		case DISTRACTED:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(165, 0 , 255));
 			break;
 		case HAPPY:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(0, 255, 65));
 			break;
 		case CALM:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(0, 248 , 255));
 			break;
 		case FOCUSED:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(255, 255, 213));
 			break;
 		default:
-			strip.setPixelColor(0, strip.Color(0, 0 , 0));
+			strip.setPixelColor(0, strip.Color(255, 123 , 0));
 			break;
 	}
 
 	switch(ctxpair & TO_CTX_MASK) {
 		case SAD:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
-			break;
+			strip.setPixelColor(1, strip.Color(0, 0 , 255));
+			break; 
 		case MAD:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(255, 0 , 0));
 			break;
 		case FEARFUL:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(255, 0 , 140));
 			break;
 		case DISTRACTED:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(165, 0 , 255));
 			break;
 		case HAPPY:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(0, 255, 65));
 			break;
 		case CALM:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(0, 248, 255));
 			break;
 		case FOCUSED:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(255, 255 , 213));
 			break;
 		default:
-			strip.setPixelColor(1, strip.Color(0, 0 , 0));
+			strip.setPixelColor(1, strip.Color(255, 123 , 0));
 			break;
 	}
 	strip.show();
+
+	if (((ctxpair & FROM_CTX_MASK) >> 4) == (ctxpair & TO_CTX_MASK)) {
+		//don't do anything, not even the epsilon select,
+		//if the desired context and current context are the same
+		delay(2000);
+		return;
+	}
 
 	actionScore = epsilon_select(ctxpair, 10);
 	switch(actionScore.action) {
@@ -403,7 +471,7 @@ void loop() {
 		actionScore.score--;
 	}
 	db.updateRec(actionScore.id, EDB_REC actionScore);
-	*/
+	//
 }
 
 /*** Motor Functions ***/

@@ -1,45 +1,15 @@
 #include <EDB.h>
 #include <EEPROM.h>
-
-#define TABLE_SIZE 1024// max size in ATMega328
-
 #include <Adafruit_NeoPixel.h> // Adafruit NeoPixel Library
 
-typedef struct {
-	byte action;
-	byte ctxpair; // maybe we can use the first four bits for the prev and last four for next
-	byte score;
-	byte id;
-} ActionScore;
+#include "RoverCommon.h"
 
 ActionScore actionScore;
 
 //hrm...with this size, we have room for 253 records
 //doing that mod increases it to 338 records
-
+#define TABLE_SIZE 1024// max size in ATMega328
 #define MAX_RECORDS (TABLE_SIZE - sizeof(EDB_Header))/sizeof(ActionScore)
-
-#define FROM_CTX_MASK B11110000
-#define TO_CTX_MASK   B00001111
-
-#define SAD B0000
-#define MAD B0001
-#define FEARFUL B0010
-#define DISTRACTED B0011
-#define HAPPY B1111
-#define CALM B1110
-#define FOCUSED B1100
-#define UNKNOWN B0100
-
-// limit ourselves to possibly four actions for a given context pair
-#define ACTION0_MASK   15    //B1111000000000000
-#define ACTION1_MASK   240   //B0000111100000000
-#define ACTION2_MASK   3840  //B0000000011110000
-#define ACTION3_MASK   61440 //B0000000000001111
-
-//int lookups[256];
-//lookups[0b00101010] = 0b0011110111001001;
-//int lookups[256]; //we should probably burn this into prog memory 
 
 // The read and write handlers for using the EEPROM Library
 void writer(unsigned long address, byte data)

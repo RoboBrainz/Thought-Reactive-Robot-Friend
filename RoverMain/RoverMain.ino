@@ -233,55 +233,55 @@ void loop() {
 
 	switch((ctxpair & FROM_CTX_MASK) >> 4) {
 		case SAD:
-			strip.setPixelColor(0, strip.Color(0, 0 , 255));
+			strip.setPixelColor(0, SAD_COLOR);
 			break;
 		case MAD:
-			strip.setPixelColor(0, strip.Color(255, 0 , 0));
+			strip.setPixelColor(0, MAD_COLOR);
 			break;
 		case FEARFUL:
-			strip.setPixelColor(0, strip.Color(255, 0 , 140));
+			strip.setPixelColor(0, FEARFUL_COLOR);
 			break;
 		case DISTRACTED:
-			strip.setPixelColor(0, strip.Color(165, 0 , 255));
+			strip.setPixelColor(0, DISTRACTED_COLOR);
 			break;
 		case HAPPY:
-			strip.setPixelColor(0, strip.Color(0, 255, 65));
+			strip.setPixelColor(0, HAPPY_COLOR);
 			break;
 		case CALM:
-			strip.setPixelColor(0, strip.Color(0, 248 , 255));
+			strip.setPixelColor(0, CALM_COLOR);
 			break;
 		case FOCUSED:
-			strip.setPixelColor(0, strip.Color(255, 255, 213));
+			strip.setPixelColor(0, FOCUSED_COLOR);
 			break;
 		default:
-			strip.setPixelColor(0, strip.Color(255, 123 , 0));
+			strip.setPixelColor(0, UNKNOWN_COLOR);
 			break;
 	}
 
 	switch(ctxpair & TO_CTX_MASK) {
 		case SAD:
-			strip.setPixelColor(1, strip.Color(0, 0 , 255));
-			break; 
+			strip.setPixelColor(1, SAD_COLOR);
+			break;
 		case MAD:
-			strip.setPixelColor(1, strip.Color(255, 0 , 0));
+			strip.setPixelColor(1, MAD_COLOR);
 			break;
 		case FEARFUL:
-			strip.setPixelColor(1, strip.Color(255, 0 , 140));
+			strip.setPixelColor(1, FEARFUL_COLOR);
 			break;
 		case DISTRACTED:
-			strip.setPixelColor(1, strip.Color(165, 0 , 255));
+			strip.setPixelColor(1, DISTRACTED_COLOR);
 			break;
 		case HAPPY:
-			strip.setPixelColor(1, strip.Color(0, 255, 65));
+			strip.setPixelColor(1, HAPPY_COLOR);
 			break;
 		case CALM:
-			strip.setPixelColor(1, strip.Color(0, 248, 255));
+			strip.setPixelColor(1, CALM_COLOR);
 			break;
 		case FOCUSED:
-			strip.setPixelColor(1, strip.Color(255, 255 , 213));
+			strip.setPixelColor(1, FOCUSED_COLOR);
 			break;
 		default:
-			strip.setPixelColor(1, strip.Color(255, 123 , 0));
+			strip.setPixelColor(1, UNKNOWN_COLOR);
 			break;
 	}
 	strip.show();

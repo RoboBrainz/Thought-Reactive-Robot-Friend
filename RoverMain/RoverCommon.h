@@ -22,3 +22,12 @@ typedef struct {
 #define ACTION1_MASK   240   //B0000111100000000
 #define ACTION2_MASK   3840  //B0000000011110000
 #define ACTION3_MASK   61440 //B0000000000001111
+
+#define SAD_COLOR           strip.Color(  0,   0, 255)
+#define MAD_COLOR           strip.Color(255,   0,   0)
+#define FEARFUL_COLOR       strip.Color(255,   0, 140)
+#define DISTRACTED_COLOR    strip.Color(165,   0, 255)
+#define HAPPY_COLOR         strip.Color(  0, 255,  65)
+#define CALM_COLOR          strip.Color(  0, 248, 255)
+#define FOCUSED_COLOR       strip.Color(255, 255, 213)
+#define UNKNOWN_COLOR       strip.Color(255, 123,   0)

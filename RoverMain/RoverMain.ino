@@ -413,22 +413,46 @@ void loop() {
 			break;
 		case 12: // Turn left and drive UNTESTED
 			wake();
-			// ACTION
+			leftInPlace(90);
+			allForward(100);
+			delay(1000);
 			sleep();
 			break;
 		case 13: // Turn right and drive UNTESTED
 			wake();
-			// ACTION
+			rightInPlace(90);
+			allForward(100);
+			delay(1000);
 			sleep();
 			break;
-		case 14: // Small spins back and forth UNTESTED
+		case 14: // Wiggle in place UNTESTED
 			wake();
-			// ACTION
+			leftInPlace(30);
+			rightInPlace(30);
+			leftInPlace(30);
+			rightInPlace(30);
+			leftInPlace(30);
+			rightInPlace(30);
+			leftInPlace(30);
+			rightInPlace(30);
+			leftInPlace(30);
+			rightInPlace(30);
+			leftInPlace(30);
+			rightInPlace(30);
 			sleep();
 			break;
 		case 15: // Traverse a spiral UNTESTED
 			wake();
-			// ACTION
+			ccwCircle(100);
+			delay(1000); // PROBABLY NEED TO CHANGE DELAY
+			ccwCircle(80);
+			delay(800); // PROBABLY NEED TO CHANGE DELAY
+			ccwCircle(60);
+			delay(600); // PROBABLY NEED TO CHANGE DELAY
+			ccwCircle(40);
+			delay(400); // PROBABLY NEED TO CHANGE DELAY
+			ccwCircle(20);
+			delay(200); // PROBABLY NEED TO CHANGE DELAY
 			sleep();
 			break;
 		default: // Do nothing

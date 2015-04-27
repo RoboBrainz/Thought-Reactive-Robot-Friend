@@ -295,79 +295,79 @@ void loop() {
 
 	actionScore = epsilon_select(ctxpair, 10);
 	switch(actionScore.action) {
-		case 0: // Drive forward, turn around, drive back UNTESTED
+		case 0: // Drive forward, turn around, drive back
 			wake();
 			allForward(100);
-			delay(1000);
+			delay(2000);
 			brakes();
 			leftInPlace(180);
 			allForward(100);
-			delay(1000);
+			delay(2000);
 			sleep();
 			break;
-		case 1: // Drive backward UNTESTED
+		case 1: // Drive backward
 			wake();
-			allBackward(50);
+			allBackward(100);
 			delay(2000);
 			brakes();
 			sleep();
 			break;
-		case 2: // Drive in a clockwise circle UNTESTED
+		case 2: // Drive in a clockwise circle
 			wake();
-			cwCircle(50);
-			delay(2000); // PROBABLY NEED TO CHANGE DELAY
+			cwCircle(100);
+			delay(8000);
 			sleep();
 			break;
-		case 3: // Drive in a counter-clockwise circle UNTESTED
+		case 3: // Drive in a counter-clockwise circle
 			wake();
-			ccwCircle(50);
-			delay(2000); // PROBABLY NEED TO CHANGE DELAY
+			ccwCircle(100);
+			delay(8000);
 			sleep();
 			break;
-		case 4: // Drive in a slight squiggle for 3 seconds UNTESTED
+		case 4: // Drive in a slight squiggle for 5 seconds
 			wake();
-			squiggle(75, 3, 2);
+			squiggle(100, 5, 2);
 			sleep();
 			break;
-		case 5: // Drive in a larger squiggle for 3 seconds UNTESTED
+		case 5: // Drive in a larger squiggle for 5 seconds
 			wake();
-			squiggle(75, 3, 4);
+			squiggle(100, 3, 4);
 			sleep();
 			break;
-		case 6: // Traverse a square UNTESTED
+		case 6: // Traverse a square
 			wake();
-			allForward(50);
-			delay(1000);
+			allForward(100);
+			delay(2000);
 			leftInPlace(90);
-			allForward(50);
-			delay(1000);
+			allForward(100);
+			delay(2000);
 			leftInPlace(90);
-			allForward(50);
-			delay(1000);
+			allForward(100);
+			delay(2000);
 			leftInPlace(90);
-			allForward(50);
-			delay(1000);
+			allForward(100);
+			delay(2000);
 			sleep();
 			break;
-		case 7: // Traverse a triangle UNTESTED
+		case 7: // Traverse a triangle
 			wake();
-			allForward(50);
-			delay(1000);
+			allForward(100);
+			delay(2000);
 			leftInPlace(60);
-			allForward(50);
-			delay(1000);
+			allForward(100);
+			delay(2000);
 			leftInPlace(60);
-			allForward(50);
-			delay(1000);
+			allForward(100);
+			delay(2000);
 			sleep();
 			break;
-		case 8: // Spin in place UNTESTED
+		case 8: // Spin in place
 			wake();
 			leftInPlace(360);
 			rightInPlace(360);
 			sleep();
 			break;
-		case 9: // Short back and forth movements UNTESTED
+		case 9: // Short back and forth movements
 			wake();
 			allForward(100);
 			delay(100);
@@ -387,45 +387,45 @@ void loop() {
 			delay(100);
 			sleep();
 			break;
-		case 10: // Half circle, then come back UNTESTED
+		case 10: // Half circle, then come back NEEDS TWEAKING
 			wake();
-			cwCircle(50);
-			delay(1000); // PROBABLY NEED TO CHANGE DELAY
-			rightInPlace(90);
-			allForward(50);
-			delay(800);  // PROBABLY NEED TO CHANGE DELAY
-			sleep();
-			break;
-		case 11: // Traverse a clover UNTESTED
-			wake();
-			cwCircle(50);
-			delay(700); // PROBABLY NEED TO CHANGE DELAY
-			leftInPlace(90);
-			cwCircle(50);
-			delay(700); // PROBABLY NEED TO CHANGE DELAY
-			leftInPlace(90);
-			cwCircle(50);
-			delay(700); // PROBABLY NEED TO CHANGE DELAY
-			leftInPlace(90);
-			cwCircle(50);
-			delay(700); // PROBABLY NEED TO CHANGE DELAY
-			sleep();
-			break;
-		case 12: // Turn left and drive UNTESTED
-			wake();
-			leftInPlace(90);
-			allForward(100);
-			delay(1000);
-			sleep();
-			break;
-		case 13: // Turn right and drive UNTESTED
-			wake();
+			cwCircle(100);
+			delay(4000);
 			rightInPlace(90);
 			allForward(100);
-			delay(1000);
+			delay(2000); 
 			sleep();
 			break;
-		case 14: // Wiggle in place UNTESTED
+		case 11: // Traverse a clover NEEDS TWEAKING
+			wake();
+			cwCircle(80);
+			delay(2000);
+			leftInPlace(90);
+			cwCircle(80);
+			delay(2000);
+			leftInPlace(90);
+			cwCircle(80);
+			delay(2000);
+			leftInPlace(90);
+			cwCircle(80);
+			delay(2000);
+			sleep();
+			break;
+		case 12: // Turn left and drive
+			wake();
+			leftInPlace(90);
+			allForward(100);
+			delay(2000);
+			sleep();
+			break;
+		case 13: // Turn right and drive
+			wake();
+			rightInPlace(90);
+			allForward(100);
+			delay(2000);
+			sleep();
+			break;
+		case 14: // Wiggle in place
 			wake();
 			leftInPlace(30);
 			rightInPlace(30);
@@ -441,18 +441,18 @@ void loop() {
 			rightInPlace(30);
 			sleep();
 			break;
-		case 15: // Traverse a spiral UNTESTED
+		case 15: // Traverse a spiral NEEDS TWEAKING
 			wake();
+			ccwCircle(120);
+			delay(3000);
 			ccwCircle(100);
-			delay(1000); // PROBABLY NEED TO CHANGE DELAY
+			delay(2800);
 			ccwCircle(80);
-			delay(800); // PROBABLY NEED TO CHANGE DELAY
+			delay(2600);
 			ccwCircle(60);
-			delay(600); // PROBABLY NEED TO CHANGE DELAY
+			delay(2400);
 			ccwCircle(40);
-			delay(400); // PROBABLY NEED TO CHANGE DELAY
-			ccwCircle(20);
-			delay(200); // PROBABLY NEED TO CHANGE DELAY
+			delay(2200);
 			sleep();
 			break;
 		default: // Do nothing
@@ -520,22 +520,22 @@ void squiggle(int squigSpeed, int squigTime, int squigFactor) {
 }
 
 // Turn the rover left in place the given number of degrees
-void leftInPlace(int degrees) {
-	motorize( 0, 50, 1);
-	motorize( 1, 50, 0);
-	motorize( 2, 50, 1);
-	motorize( 3, 50, 0);
-	delay(1000 * (degrees / 360)); // UNTESTED
+void leftInPlace(double degrees) {
+	motorize( 0, 80, 1);
+	motorize( 1, 80, 0);
+	motorize( 2, 80, 1);
+	motorize( 3, 80, 0);
+	delay(6000 * (degrees / 360)); // UNTESTED
 	brakes();
 }
 
 // Turn the rover right in place the given number of degrees
-void rightInPlace(int degrees) {
-	motorize( 0, 50, 0);
-	motorize( 1, 50, 1);
-	motorize( 2, 50, 0);
-	motorize( 3, 50, 1);
-	delay(1000 * (degrees / 360)); // UNTESTED
+void rightInPlace(double degrees) {
+	motorize( 0, 80, 0);
+	motorize( 1, 80, 1);
+	motorize( 2, 80, 0);
+	motorize( 3, 80, 1);
+	delay(6000 * (degrees / 360)); // UNTESTED
 	brakes();
 }
 

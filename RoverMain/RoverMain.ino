@@ -35,7 +35,7 @@ ActionScore epsilon_select(byte ctxpair, byte eps) {
 
 	byte epsilon = (byte)random(100);
 	int ctxinfo = 0;
-
+        Serial.println("Receiving Context Pair");
 	switch(ctxpair) {
 		case (SAD << 4) | HAPPY:
 			ctxinfo = (B00000011) << 8 | B10001100;
@@ -52,11 +52,13 @@ ActionScore epsilon_select(byte ctxpair, byte eps) {
 	}
 
 	if (epsilon < eps) {
+                Serial.println("doing rndm action");
 		ActionScore as;
 		db.readRec(ctxinfo & (15 << (random(4) * 4)), EDB_REC as);
 		return as;
 	}
 	else {
+                Serial.println("doing best action");
 		ActionScore actionScore1;
 		ActionScore actionScore2;
 		ActionScore actionScore3;
@@ -227,9 +229,14 @@ void setup() {
 }
 
 void loop() {
-	//insert retrieving EEG return codes here
+        Serial.println("Retrieving mood");
+  	//insert retrieving EEG return codes here
 	//
 	byte ctxpair = reccodes2ctx();
+        Serial.print((ctxpair & FROM_CTX_MASK) >> 4);
+        Serial.print(" ");
+        Serial.println(ctxpair & TO_CTX_MASK);
+        
 
 	switch((ctxpair & FROM_CTX_MASK) >> 4) {
 		case SAD:
@@ -289,11 +296,13 @@ void loop() {
 	if (((ctxpair & FROM_CTX_MASK) >> 4) == (ctxpair & TO_CTX_MASK)) {
 		//don't do anything, not even the epsilon select,
 		//if the desired context and current context are the same
+                Serial.println("Same current and desired moods, doing nothing");
 		delay(2000);
 		return;
 	}
-
+        Serial.print("Perform action ");
 	actionScore = epsilon_select(ctxpair, 10);
+        Serial.println(actionScore.action);
 	switch(actionScore.action) {
 		case 0: // Drive forward, turn around, drive back
 			wake();
@@ -458,10 +467,13 @@ void loop() {
 		default: // Do nothing
 			break;
 	}
+        Serial.println("Checking result mood");
 	byte newctxpair = reccodes2ctx();
 	if ((newctxpair & FROM_CTX_MASK) >> 4 == ctxpair & TO_CTX_MASK) {
+                Serial.println("Changed to desired context successfully");
 		actionScore.score++;
 	} else {
+                Serial.println("Didn't change to desired context successfully");
 		actionScore.score--;
 	}
 	db.updateRec(actionScore.id, EDB_REC actionScore);

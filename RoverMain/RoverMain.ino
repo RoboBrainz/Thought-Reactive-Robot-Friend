@@ -1,6 +1,7 @@
 #include <EDB.h>
 #include <EEPROM.h>
 #include <Adafruit_NeoPixel.h> // Adafruit NeoPixel Library
+//#include <MemoryFree.h>
 
 #include "RoverCommon.h"
 
@@ -35,7 +36,7 @@ ActionScore epsilon_select(byte ctxpair, byte eps) {
 
 	byte epsilon = (byte)random(100);
 	int ctxinfo = 0;
-        Serial.println("Receiving Context Pair");
+        Serial.println(F("Receiving Context Pair"));
 	switch(ctxpair) {
 		case (SAD << 4) | HAPPY:
 			ctxinfo = (B00000011) << 8 | B10001100;
@@ -52,13 +53,13 @@ ActionScore epsilon_select(byte ctxpair, byte eps) {
 	}
 
 	if (epsilon < eps) {
-                Serial.println("doing rndm action");
+                Serial.println(F("doing rndm action"));
 		ActionScore as;
 		db.readRec(ctxinfo & (15 << (random(4) * 4)), EDB_REC as);
 		return as;
 	}
 	else {
-                Serial.println("doing best action");
+                Serial.println(F("doing best action"));
 		ActionScore actionScore1;
 		ActionScore actionScore2;
 		ActionScore actionScore3;
@@ -95,9 +96,11 @@ ActionScore epsilon_select(byte ctxpair, byte eps) {
 byte reccodes2ctx() {
 	//we should read in the serial from here
 	//and determine the contexts we have and want to get to
-	if (Serial.available() > 0) {
+	//if (Serial.available() > 0) {
+        while(!Serial.available()) ;
 		char incomingByte = Serial.read();
-		
+		Serial.print(F("Got data:"));
+                Serial.println(incomingByte);
 		//now that we have the byte corresponding to the current ctx,
 		//determine which ctx we want to trigger
 
@@ -119,9 +122,9 @@ byte reccodes2ctx() {
 			default:
 				return (UNKNOWN << 4) | UNKNOWN;
 		}
-	}
+	//}
 	//example ctxes: happy, sad, angry, fearful, calm, focused, distracted
-	return (UNKNOWN | (UNKNOWN << 4));
+	//return (UNKNOWN | (UNKNOWN << 4));
 }
 
 /*** Pin Layout ***/
@@ -175,7 +178,7 @@ void setup() {
 
 	/** Database Setup **/
 	Serial.begin(9600);
-	Serial.print("Max DB records: ");
+	Serial.print(F("Max DB records: "));
 	Serial.println(MAX_RECORDS);
 
 	//check if the DB exists
@@ -183,7 +186,7 @@ void setup() {
 
 	//if record count is 0 (I think?), populate stub DB
 	if (db.count() == 0) {
-		Serial.println("Creating DB");
+		Serial.println(F("Creating DB"));
 		db.create(0, TABLE_SIZE, sizeof(actionScore));
 
 
@@ -222,23 +225,29 @@ void setup() {
 
 	}
 	else {
-		Serial.println("Using existing DB");
+		Serial.println(F("Using existing DB"));
 	}
 
 	//wait for the ready message from the mini computer?
 }
 
 void loop() {
-        Serial.println("Retrieving mood");
+        //Serial.print("freeMemory()=");
+        //Serial.println(freeMemory());
+  
+  
+        Serial.println(F("Retrieving mood"));
   	//insert retrieving EEG return codes here
 	//
 	byte ctxpair = reccodes2ctx();
-        Serial.print((ctxpair & FROM_CTX_MASK) >> 4);
-        Serial.print(" ");
-        Serial.println(ctxpair & TO_CTX_MASK);
+        byte frommood = ((ctxpair & FROM_CTX_MASK) >> 4);
+        byte tomood = (ctxpair & TO_CTX_MASK);
+        Serial.print(frommood, BIN);
+        Serial.print(F("|"));
+        Serial.println(tomood, BIN);
         
-
-	switch((ctxpair & FROM_CTX_MASK) >> 4) {
+        Serial.println(F("Lighting LEDs"));
+	switch(frommood) {
 		case SAD:
 			strip.setPixelColor(0, SAD_COLOR);
 			break;
@@ -265,7 +274,7 @@ void loop() {
 			break;
 	}
 
-	switch(ctxpair & TO_CTX_MASK) {
+	switch(tomood) {
 		case SAD:
 			strip.setPixelColor(1, SAD_COLOR);
 			break;
@@ -293,17 +302,17 @@ void loop() {
 	}
 	strip.show();
 
-	if (((ctxpair & FROM_CTX_MASK) >> 4) == (ctxpair & TO_CTX_MASK)) {
+	if (frommood == tomood) {
 		//don't do anything, not even the epsilon select,
 		//if the desired context and current context are the same
-                Serial.println("Same current and desired moods, doing nothing");
+                Serial.println(F("Same current and desired moods, doing nothing"));
 		delay(2000);
-		return;
 	}
-        Serial.print("Perform action ");
-	actionScore = epsilon_select(ctxpair, 10);
-        Serial.println(actionScore.action);
-	switch(actionScore.action) {
+        else {
+            Serial.print(F("Perform action "));
+	    actionScore = epsilon_select(ctxpair, 10);
+            Serial.println(actionScore.action);
+	    switch(actionScore.action) {
 		case 0: // Drive forward, turn around, drive back
 			wake();
 			allForward(100);
@@ -467,16 +476,21 @@ void loop() {
 		default: // Do nothing
 			break;
 	}
-        Serial.println("Checking result mood");
-	byte newctxpair = reccodes2ctx();
-	if ((newctxpair & FROM_CTX_MASK) >> 4 == ctxpair & TO_CTX_MASK) {
-                Serial.println("Changed to desired context successfully");
-		actionScore.score++;
-	} else {
-                Serial.println("Didn't change to desired context successfully");
-		actionScore.score--;
-	}
-	db.updateRec(actionScore.id, EDB_REC actionScore);
+            Serial.print(F("Result mood is "));
+        	byte newctxpair = reccodes2ctx();
+        byte resmood = ((newctxpair & FROM_CTX_MASK) >> 4);
+            Serial.print(resmood, BIN);
+            Serial.print(F(" vs "));
+            Serial.println(tomood, BIN);
+        	if (resmood == tomood) {
+                    Serial.println(F("Changed to desired context successfully"));
+	         actionScore.score++;
+	    } else {
+                        Serial.println(F("Didn't change to desired context successfully"));
+	        	actionScore.score--;
+	    }
+	    db.updateRec(actionScore.id, EDB_REC actionScore);
+    }
 	//
 }
 
